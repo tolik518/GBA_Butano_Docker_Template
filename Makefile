@@ -23,8 +23,30 @@ run: compile
 
 # compiles the code into a .gba files, found in the /out folder
 .PHONY: compile
-compile: clean_out clean_sound
+compile:
 	docker run \
 		-v $$(pwd)/code:/${USER} \
 		-v $$(pwd)/out:/out \
 		$(VENDORNAME)/$(PROJECTNAME)/$(CONTAINERNAME):dev
+
+# gets template files from butano
+.PHONY: get_template
+get_template:
+	-@docker run \
+		--cidfile=c.cid \
+		$(VENDORNAME)/$(PROJECTNAME)/$(CONTAINERNAME):dev \
+		"echo" "getting c.cid"
+	docker cp $$(cat c.cid):/opt/butano/template/. $$(pwd)/code
+	echo "template copied to $$(pwd)/code"
+	-@rm c.cid
+
+# gets template files from butano
+.PHONY: get_includes
+get_includes:
+	-@docker run \
+		--cidfile=c.cid \
+		$(VENDORNAME)/$(PROJECTNAME)/$(CONTAINERNAME):dev \
+		"echo" "getting c.cid"
+	docker cp $$(cat c.cid):/opt/butano/butano/. $$(pwd)/butano
+	echo "template copied to $$(pwd)/code"
+	-@rm c.cid
